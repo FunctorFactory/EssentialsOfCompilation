@@ -12,11 +12,19 @@
 -- input language. This language definition will be extended each chapter and Siek
 -- treats each chapter as introducing a new language that is a superset of the one
 -- from previous chapters.
+{-# LANGUAGE AllowAmbiguousTypes       #-}
+{-# LANGUAGE DataKinds                 #-}
+{-# LANGUAGE DeriveGeneric             #-}
+{-# LANGUAGE DuplicateRecordFields     #-}
+{-# LANGUAGE FlexibleContexts          #-}
+{-# LANGUAGE NoMonomorphismRestriction #-}
+{-# LANGUAGE GADTs #-}
 module Compiler.Ast.Lisp
   ( Program(..),
     Expression (..),
   )
 where
+import GHC.Generics (Generic)
 
 newtype Program = Program Expression
 
@@ -28,13 +36,14 @@ newtype Program = Program Expression
 --       | (- exp exp)
 --       | (let ([var exp]) exp)
 -- program :: = exp
-data Expression
-  = IntLiteral Int
-  | Var String
-  | Neg Expression
-  | Add Expression Expression
-  | Sub Expression Expression
-  | Let String Expression Expression
+data Expression where
+  IntLiteral :: Int -> Expression
+  Var :: String -> Expression
+  Neg :: Expression -> Expression
+  Add :: Expression -> Expression -> Expression
+  Sub :: Expression -> Expression -> Expression
+  Let :: String -> Expression -> Expression -> Expression
+  deriving Generic
 
 instance Show Expression where
   show (IntLiteral a) = show a

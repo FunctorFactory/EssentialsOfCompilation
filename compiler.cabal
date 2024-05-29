@@ -8,11 +8,9 @@ license:            GPL-3.0-or-later
 license-file:       LICENSE
 author:             Jake Shilling
 maintainer:         shilling.jake@gmail.com
--- copyright:
 category:           compilers
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
--- extra-source-files:
 
 common warnings
     ghc-options: -Wall
@@ -22,10 +20,14 @@ library
     exposed-modules:
       Compiler.Ast.Lisp,
       Compiler.Ast.Interm,
-      Compiler.Ast.Asm
-    -- other-modules:
-    -- other-extensions:
-    build-depends:    base ^>=4.17.2.1
+      Compiler.Ast.Asm,
+      Compiler.Phases.Uniquify
+    build-depends:
+      , base ^>=4.17.2.1
+      , transformers >= 0.5.6 && < 0.6
+      , containers >= 0.6.7 && < 0.7
+      , lens >= 5.3.1 && < 5.4
+      , generic-lens >= 2.2.2 && < 2.3
     hs-source-dirs:   lib
     default-language: Haskell2010
 
@@ -44,11 +46,14 @@ executable compiler
 test-suite compiler-test
     import:           warnings
     default-language: Haskell2010
-    -- other-modules:
-    -- other-extensions:
     type:             exitcode-stdio-1.0
-    hs-source-dirs:   test
-    main-is:          Main.hs
+    hs-source-dirs:   tests
+    main-is:          Tests.hs
+    ghc-options:      -Wall -threaded -rtsopts
+    other-modules:
+      Properties
     build-depends:
-        base ^>=4.17.2.1,
-        compiler
+        , base ^>=4.17.2.1
+        , compiler
+        , QuickCheck
+        , tasty
